@@ -1,32 +1,90 @@
 package com.energizeglobal.internship;
 
-import com.energizeglobal.internship.exceptions.MachineFailureException;
-import com.energizeglobal.internship.exceptions.NoSuchComponentException;
-
-import java.util.Arrays;
+import java.io.Closeable;
 
 /**
  * Hello world!
  */
 public class App {
     public static void main(String[] args) {
-        ToyFactoryImpl toyFactory = new ToyFactoryImpl();
+        tryWithResources();
         try {
-            System.out.println("Car department.");
-            System.out.println(Arrays.toString(toyFactory.makeCars()));
-        } catch (NoSuchComponentException ex) {
-            System.out.println("no such components car department.");
+            tryCatchWithException();
+        } catch (Exception ignored) {
         }
-        try {
-            System.out.println("Barby department.");
-            System.out.println(Arrays.toString(toyFactory.makeBarbies()));
-        } catch (MachineFailureException ex) {
-            System.out.println("in barby department we have a failure.");
-        }
-        System.out.println("Gun department.");
-        System.out.println(Arrays.toString(toyFactory.makeGuns()));
-        System.out.println("Dinosaur department.");
-        System.out.println(Arrays.toString(toyFactory.makeDinosaurs()));
+
+        tryWithSystemExit();
+
 
     }
+
+    static void tryWithSystemExit() {
+        System.out.println("Try with System.exit()");
+        try {
+            System.out.println("In try block");
+            throw new Exception();
+        } catch (Exception ex) {
+            System.out.println("In catch block");
+            System.exit(0);
+            System.out.println("catch block after exit command");
+        } finally {
+            System.out.println("In finally block");
+        }
+        System.out.println();
+    }
+
+    static void tryWithResources() {
+        System.out.println("Try with resources.");
+        try (A a = new A();
+             B b = new B();
+             C c = new C();) {
+            System.out.println("in try");
+        } finally {
+            System.out.println("In finally");
+        }
+        System.out.println();
+    }
+
+    static void tryCatchWithException() {
+        System.out.println("Try with catch exception.");
+        try {
+            System.out.println("In try block");
+            throw new Exception();
+        } catch (Exception ex) {
+            System.out.println("In catch block");
+            throw new RuntimeException();
+        } finally {
+            System.out.println("In finally block");
+            System.out.println();
+        }
+    }
+
+    static class A implements AutoCloseable {
+        @Override
+        public void close() {
+            System.out.println("A class closing");
+        }
+    }
+
+
+    /**
+     * Closeable interface for IO streams.
+     */
+    static class B implements Closeable {
+        @Override
+        public void close() {
+            System.out.println("B class closing");
+        }
+    }
+
+    static class C implements Closeable {
+        @Override
+        public void close() {
+            System.out.println("C class closing.");
+        }
+    }
+
+
 }
+
+
